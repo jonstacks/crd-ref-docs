@@ -158,6 +158,9 @@ type processor struct {
 }
 
 func (p *processor) findAPITypes(directory string) error {
+	logger := zap.S().With("directory", directory)
+	logger.Debug("Finding API Types")
+
 	cfg := &packages.Config{Dir: directory}
 	pkgs, err := loader.LoadRootsWithConfig(cfg, "./...")
 	if err != nil {
@@ -165,6 +168,7 @@ func (p *processor) findAPITypes(directory string) error {
 	}
 
 	for _, pkg := range pkgs {
+		logger.Debug("Processing pkg", "name", pkg.Name)
 		gvInfo := p.extractGroupVersionIfExists(p.parser.Collector, pkg)
 		if gvInfo == nil {
 			continue
